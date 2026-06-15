@@ -10,9 +10,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Имя файла с дефисом нельзя подключить через `import` — грузим по пути.
 _SCRIPT = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ramreader-by-pid.py"
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ram-dump-by-pid.py"
 )
-_spec = importlib.util.spec_from_file_location("ramreader_by_pid", _SCRIPT)
+_spec = importlib.util.spec_from_file_location("ram_dump_by_pid", _SCRIPT)
 reader = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(reader)
 

@@ -3,13 +3,13 @@
 
 Примеры:
     # hex-дамп 256 байт по адресу
-    python3 ramreader-by-pid.py --name notepad.exe --addr 0x7ff6_0000_0000 --size 256
+    python3 ram-dump-by-pid.py --name notepad.exe --addr 0x7ff6_0000_0000 --size 256
 
     # чтение от базы модуля + смещение, в файл
-    python3 ramreader-by-pid.py --pid 1234 --module ntdll.dll --offset 0x1000 --size 4096 --out dump.bin
+    python3 ram-dump-by-pid.py --pid 1234 --module ntdll.dll --offset 0x1000 --size 4096 --out dump.bin
 
     # перечислить регионы адресного пространства
-    python3 ramreader-by-pid.py --pid 1234 --vads
+    python3 ram-dump-by-pid.py --pid 1234 --vads
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ from rampidreader.backend import MemProcFSBackend
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="ramreader-by-pid.py",
+        prog="ram-dump-by-pid.py",
         description="Чтение памяти процесса по PID через драйвер физпамяти (winpmem).",
     )
 

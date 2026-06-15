@@ -11,7 +11,7 @@
 
 | Реализация | Каталог | Запускаемый артефакт |
 |------------|---------|----------------------|
-| Python | [`python/`](python/) | `ramreader-by-pid.py` |
+| Python | [`python/`](python/) | `ram-dump-by-pid.py` |
 | Rust | [`rust/`](rust/) | `ram-dump-by-pid` (`.exe`) |
 
 Подробности по сборке, тестам и использованию — в README соответствующего каталога:

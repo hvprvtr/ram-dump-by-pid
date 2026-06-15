@@ -14,7 +14,7 @@
 |------|------|---------------------|
 | Чистая логика (выбор процесса, валидация, hexdump, обход регионов для дампа) | `rampidreader/core.py` | нет — тестируется на моках |
 | Адаптер memprocfs/LeechCore | `rampidreader/backend.py` | да (ленивый импорт) |
-| CLI | `ramreader-by-pid.py` | да |
+| CLI | `ram-dump-by-pid.py` | да |
 
 ## Установка
 
@@ -39,19 +39,19 @@ LeechCore собирает из этого device-строку `PMEM://C:\path\w
 
 ```powershell
 # hex-дамп 256 байт по виртуальному адресу
-python ramreader-by-pid.py --name notepad.exe --addr 0x7ff600000000 --size 256 --driver C:\path\winpmem_x64.sys
+python ram-dump-by-pid.py --name notepad.exe --addr 0x7ff600000000 --size 256 --driver C:\path\winpmem_x64.sys
 
 # от базы модуля + смещение, сырыми байтами в файл
-python ramreader-by-pid.py --pid 1234 --module ntdll.dll --offset 0x1000 --size 4096 --out dump.bin --driver C:\path\winpmem_x64.sys
+python ram-dump-by-pid.py --pid 1234 --module ntdll.dll --offset 0x1000 --size 4096 --out dump.bin --driver C:\path\winpmem_x64.sys
 
 # карта регионов адресного пространства (VAD)
-python ramreader-by-pid.py --pid 1234 --vads --driver C:\path\winpmem_x64.sys
+python ram-dump-by-pid.py --pid 1234 --vads --driver C:\path\winpmem_x64.sys
 
 # ПОЛНЫЙ дамп процесса — нужны только --pid/--name и --out
-python ramreader-by-pid.py --pid 1234 --dump-all --out proc.bin --driver C:\path\winpmem_x64.sys
+python ram-dump-by-pid.py --pid 1234 --dump-all --out proc.bin --driver C:\path\winpmem_x64.sys
 
 # продвинуто: сырая device-строка LeechCore (FPGA, дамп-файл и т.п.)
-python ramreader-by-pid.py --pid 1234 --vads --device FPGA
+python ram-dump-by-pid.py --pid 1234 --vads --device FPGA
 ```
 
 ### Полный дамп процесса (`--dump-all`)
