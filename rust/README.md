@@ -1,5 +1,7 @@
 # ram-dumper-by-pid (Rust)
 
+> An English version of this README is available in [README-EN.md](README-EN.md).
+
 Порт Python-инструмента на Rust поверх официального крейта
 [`memprocfs`](https://crates.io/crates/memprocfs) (тот же автор, что и MemProcFS).
 Чтение памяти процесса **по PID/имени** через winpmem + MemProcFS/LeechCore,

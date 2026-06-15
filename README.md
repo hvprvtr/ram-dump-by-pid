@@ -1,5 +1,7 @@
 # ram-pid-reader
 
+> An English version of this README is available in [README-EN.md](README-EN.md).
+
 Чтение памяти процесса **по PID/имени** через драйвер дампера физпамяти
 (WinPmem) + MemProcFS/LeechCore, **без `OpenProcess`/`PROCESS_VM_READ`** в коде
 инструмента. LeechCore поднимает подписанный драйвер WinPmem, а MemProcFS делает
