@@ -8,7 +8,10 @@ use rampidreader::{ProcessLike, Vad};
 /// Открыть устройство физпамяти. `vmm_dll` — путь к нативной vmm.dll
 /// (берём из установленного пакета memprocfs), `device` — строка `PMEM://...`.
 pub fn open<'a>(vmm_dll: &str, device: &str) -> Result<Vmm<'a>, String> {
-    let args = vec!["-device", device];
+    // -disable-symbolserver: не ходить на Microsoft Symbol Server — иначе symsrv
+    // при первом запуске показывает EULA, которую в headless/CLI нельзя принять
+    // (утилита виснет). Чтение памяти и обход VAD от серверных символов не зависят.
+    let args = vec!["-device", device, "-disable-symbolserver"];
     Vmm::new(vmm_dll, &args).map_err(|e| format!("{e}"))
 }
 

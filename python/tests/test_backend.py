@@ -11,7 +11,7 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from rampidreader.backend import MemProcFSProcess, _first_attr  # noqa: E402
+from rampidreader.backend import MemProcFSBackend, MemProcFSProcess, _first_attr  # noqa: E402
 
 
 class FakeMemory:
@@ -62,6 +62,75 @@ class FakeRawProc:
 
 class FakeMemprocfsModule:
     FLAG_NOCACHE = 0x4
+
+
+class FakeVmm:
+    """Перехватывает argv, переданный в memprocfs.Vmm(...)."""
+
+    last_args = None
+
+    def __init__(self, args):
+        FakeVmm.last_args = list(args)
+
+    def process_list(self):
+        return []
+
+    def close(self):
+        pass
+
+
+class FakeMemprocfsCapture(FakeMemprocfsModule):
+    Vmm = FakeVmm
+
+
+@pytest.fixture
+def fake_memprocfs(monkeypatch):
+    """Подменяет import memprocfs фейком, перехватывающим argv Vmm."""
+    FakeVmm.last_args = None
+    monkeypatch.setitem(sys.modules, "memprocfs", FakeMemprocfsCapture)
+    return FakeMemprocfsCapture
+
+
+# --------------------------------------------------------------------------- #
+# open() — argv для Vmm: символьный сервер должен быть отключён
+# --------------------------------------------------------------------------- #
+def test_open_passes_disable_symbolserver(fake_memprocfs):
+    with MemProcFSBackend(device="PMEM://drv.sys"):
+        pass
+    assert "-disable-symbolserver" in FakeVmm.last_args
+
+
+def test_open_keeps_device_and_order(fake_memprocfs):
+    with MemProcFSBackend(device="PMEM://drv.sys"):
+        pass
+    args = FakeVmm.last_args
+    # -device идёт со своим значением, флаг отключения сервера — отдельным токеном.
+    assert args[:2] == ["-device", "PMEM://drv.sys"]
+    assert "-disable-symbolserver" in args[2:]
+
+
+def test_open_extra_args_after_flag(fake_memprocfs):
+    """Злой случай: extra_args не вытесняют и не дублируют служебный флаг."""
+    with MemProcFSBackend(device="dev", extra_args=["-disable-symbolserver", "-v"]):
+        pass
+    args = FakeVmm.last_args
+    # Наш флаг присутствует; пользовательский дубль допустим, но порядок наш сохранён:
+    # device, наш флаг, затем extra_args.
+    assert args[0:2] == ["-device", "dev"]
+    assert args[2] == "-disable-symbolserver"
+    assert args[3:] == ["-disable-symbolserver", "-v"]
+
+
+def test_open_failure_wrapped_as_runtimeerror(monkeypatch):
+    """Злой случай: падение Vmm(...) превращается в понятный RuntimeError."""
+    class Boom(FakeMemprocfsModule):
+        class Vmm:
+            def __init__(self, args):
+                raise OSError("driver not loaded")
+
+    monkeypatch.setitem(sys.modules, "memprocfs", Boom)
+    with pytest.raises(RuntimeError, match="не удалось инициализировать LeechCore"):
+        MemProcFSBackend(device="dev").open()
 
 
 # --------------------------------------------------------------------------- #

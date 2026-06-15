@@ -88,7 +88,10 @@ class MemProcFSBackend:
             ) from e
 
         self._memprocfs = memprocfs
-        args = ["-device", self.device, *self.extra_args]
+        # -disable-symbolserver: не ходить на Microsoft Symbol Server — иначе symsrv
+        # при первом запуске показывает EULA, которую в headless/CLI нельзя принять
+        # (процесс виснет). Чтение памяти и обход VAD от серверных символов не зависят.
+        args = ["-device", self.device, "-disable-symbolserver", *self.extra_args]
         try:
             self._vmm = memprocfs.Vmm(args)
         except Exception as e:
