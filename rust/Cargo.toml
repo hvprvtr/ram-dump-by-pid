@@ -11,7 +11,7 @@ name = "rampidreader"
 path = "src/lib.rs"
 
 [[bin]]
-name = "ramreader-by-pid"
+name = "ram-dump-by-pid"
 path = "src/main.rs"
 
 [dependencies]

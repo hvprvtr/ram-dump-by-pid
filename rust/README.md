@@ -50,18 +50,26 @@ cargo build --release --features backend
 ## Запуск
 
 Крейт `memprocfs` грузит нативные `vmm.dll` и `leechcore.dll` (рядом друг с
-другом) — путь к `vmm.dll` передаётся через `--vmm`. Берите их из официального
-релиза MemProcFS (в pip-пакете `memprocfs` отдельной `leechcore.dll` нет).
+другом). Берите их из официального релиза MemProcFS (в pip-пакете `memprocfs`
+отдельной `leechcore.dll` нет).
+
+`--driver` и `--vmm` необязательны: по умолчанию `winpmem_x64.sys` и `vmm.dll`
+ищутся рядом с бинарником (`current_exe`) — достаточно положить exe и dll в одну
+папку и запускать оттуда. Явный путь, если задан, проверяется на существование.
+Symbol server Microsoft отключён в бинаре (`-disable-symbolserver`), поэтому EULA
+символов не появляется и интернет не нужен.
 
 ```powershell
-# полный дамп процесса
-ramreader-by-pid.exe --pid 1234 --dump-all --out proc.bin `
-           --driver C:\path\winpmem_x64.sys `
-           --vmm    C:\path\MemProcFS\vmm.dll
+# полный дамп процесса (драйвер и vmm.dll — из папки рядом с exe)
+ram-dump-by-pid.exe --pid 1234 --dump-all --out proc.bin
 
 # карта регионов / точечное чтение — как в Python-версии
-ramreader-by-pid.exe --name notepad.exe --vads        --driver ... --vmm ...
-ramreader-by-pid.exe --pid 1234 --module ntdll.dll --offset 0 --size 4096 --out h.bin --driver ... --vmm ...
+ram-dump-by-pid.exe --name notepad.exe --vads
+ram-dump-by-pid.exe --pid 1234 --module ntdll.dll --offset 0 --size 4096 --out h.bin
+
+# с явными путями, если dll лежат не рядом с exe
+ram-dump-by-pid.exe --pid 1234 --dump-all --out proc.bin `
+           --driver C:\path\winpmem_x64.sys --vmm C:\path\MemProcFS\vmm.dll
 ```
 
 Флаги (`--pid/--name/--addr/--module/--offset/--size/--vads/--dump-all/--out`),

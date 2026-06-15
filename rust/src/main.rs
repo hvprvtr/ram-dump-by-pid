@@ -18,7 +18,7 @@ use std::process::ExitCode;
 mod backend;
 
 const USAGE: &str = "\
-ramreader-by-pid — чтение памяти процесса по PID через драйвер физпамяти (winpmem)
+ram-dump-by-pid — чтение памяти процесса по PID через драйвер физпамяти (winpmem)
 
 ВЫБОР ЦЕЛИ (одно из):
   --pid <N>          PID процесса (dec или 0x..)
