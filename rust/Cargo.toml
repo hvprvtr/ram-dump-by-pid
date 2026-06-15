@@ -1,0 +1,23 @@
+[package]
+name = "ram-dumper-by-pid"
+version = "0.1.0"
+edition = "2021"
+description = "Чтение памяти процесса по PID через winpmem + MemProcFS, без OpenProcess"
+
+# Чистая логика (lib) тестируется без нативных библиотек — мок-тесты идут на любой
+# ОС. Реальный бэкенд memprocfs включается фичей `backend` (нужен Windows + winpmem).
+[lib]
+name = "rampidreader"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ramreader-by-pid"
+path = "src/main.rs"
+
+[dependencies]
+# Бинарь парсит аргументы вручную (std) — без внешних зависимостей.
+# Реальный бэкенд подключается фичей `backend`.
+memprocfs = { version = "5", optional = true }
+
+[features]
+backend = ["dep:memprocfs"]
